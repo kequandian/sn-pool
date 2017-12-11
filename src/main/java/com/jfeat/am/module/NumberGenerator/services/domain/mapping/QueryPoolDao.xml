@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jfeat.am.module.NumberGenerator.services.domain.dao.QueryPoolDao">
+    <sql id="Base_Column_List">
+            order_pool.*
+        </sql>
+        <select id="findPoolPage" resultType="Pool" parameterType="Pool">
+      SELECT order_pool.*
+            FROM order_pool
+            WHERE 1=1
+                             <if test="pool.number != null and pool.number!= ''">
+                 AND order_pool.number LIKE CONCAT('%',#{pool.number},'%')
+            </if>
+                             <if test="pool.isUsed != null and pool.isUsed>0 ">
+                 AND order_pool.isUsed LIKE CONCAT('%',#{pool.isUsed},'%')
+            </if>
+                    </select>
+</mapper>
