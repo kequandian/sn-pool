@@ -9,7 +9,9 @@ import com.jfeat.am.module.NumberGenerator.services.crud.service.PoolService;
 import com.jfeat.am.common.crud.impl.CRUDServiceOnlyImpl;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolConfig;
 import com.sun.javafx.binding.StringFormatter;
+import net.sf.jsqlparser.expression.StringValue;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * <p>
@@ -51,17 +54,18 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
 
     public static Integer pageNumber;
 
-    private String prefix;
-
-    private String suffix;
 
     @Override
     public void initPool() {
+        this.pools = new CopyOnWriteArrayList<>();
+        List<String> tables = poolMapper.showTables();
+        if((!tables.contains("orderPool"))&&(!tables.contains("orderpool"))){
+            poolMapper.initTable();
+        }
 
-        prefix = poolConfig.getPrefix()==null?"":poolConfig.getPrefix();//前缀
-        suffix = poolConfig.getSuffix()==null?"":poolConfig.getSuffix();//后缀
+        Integer integer = poolMapper.selectCount(new EntityWrapper<Pool>());
 
-        List<Pool> pools = new ArrayList<>();
+        List<Pool> pools = new CopyOnWriteArrayList<Pool>();
         String l = poolConfig.getLength()==null?4+"":poolConfig.getLength();
         Integer length = Integer.parseInt(l);
         String number = "";
@@ -70,6 +74,14 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
         }
 
         long parseLong = Long.parseLong(number);
+        if(integer>=(parseLong+1)){
+            Page p = new Page();
+            p.setSize(3000);
+            Pool pp = new Pool();
+            pp.setIsUsed(0);
+            this.pools=poolMapper.selectPage(p,new EntityWrapper<>(pp));
+            return;
+        }
         for(long k = 0;k<=parseLong;k++){
             int i = length - String.valueOf(k).length();
             Pool pool = new Pool();
@@ -98,22 +110,30 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
             page.setSize(3000);
             page.setCurrent(1);
             pageNumber = 1;
-            pools = poolMapper.selectPage(page, new EntityWrapper<>());
+            Pool pp = new Pool();
+            pp.setIsUsed(0);
+            pools = poolMapper.selectPage(page, new EntityWrapper<>(pp));
         }else{
             pageNumber++;
             Page page = new Page();
             page.setSize(2400);
             page.setCurrent(pageNumber);
-            List<Pool> poolList = poolMapper.selectPage(page, new EntityWrapper<>());
+            Pool pp = new Pool();
+            pp.setIsUsed(0);
+            List<Pool> poolList = poolMapper.selectPage(page, new EntityWrapper<>(pp));
             pools.addAll(poolList);
         }
     }
 
 
     @Override
-    public String getSerialNumber(boolean isFlag) {
+    @Transactional
+    public String getSerialNumber(boolean isFlag,PoolConfig poConfig) {
         Date date = new Date();
         String dateMark = new SimpleDateFormat("yyyyMMdd").format(date);
+
+        String prefix = poConfig.getPrefix()==null?"":poConfig.getPrefix();//前缀
+        String suffix = poConfig.getSuffix()==null?"":poConfig.getSuffix();//后缀
 
         if(dateMark.compareTo(dateForMark)>0){//第二天
             poolMapper.clearAll();
@@ -152,6 +172,19 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
         String right =format.substring(4,6);
         String right2 =format.substring(6,8);
         return left+left2+right2+right;
+    }
+
+    @Override
+    public void reback(long num) {
+        Pool pool = new Pool();
+        String n = String.valueOf(num);
+        n=n.substring(8);
+
+        pool.setNumber(n);
+        pool.setIsUsed(0);
+        pools.add(pool);
+
+        poolMapper.reback(pool);
     }
 
 

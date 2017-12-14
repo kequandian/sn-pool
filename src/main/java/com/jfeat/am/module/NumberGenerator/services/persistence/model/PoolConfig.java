@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("PoolConfig")
 public class PoolConfig {
-    @Value("${PoolConfig.prefix}")
     private String prefix;
-    @Value("${PoolConfig.suffix}")
     private String suffix;
     @Value("${PoolConfig.minlength}")
     private String length;
@@ -44,5 +42,10 @@ public class PoolConfig {
         this.prefix = prefix;
     }
 
+
+    public PoolConfig(String prefix, String suffix) {
+        this.prefix = prefix;
+        this.suffix = suffix;
+    }
 
 }

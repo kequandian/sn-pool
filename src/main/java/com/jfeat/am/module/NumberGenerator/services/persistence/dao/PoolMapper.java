@@ -21,4 +21,10 @@ public interface PoolMapper extends BaseMapper<Pool> {
         public void clearAll();
 
         public void setUsed(Pool pool);
+
+        public void reback(Pool pool);
+
+        public void initTable();
+
+        public List<String> showTables();
 }

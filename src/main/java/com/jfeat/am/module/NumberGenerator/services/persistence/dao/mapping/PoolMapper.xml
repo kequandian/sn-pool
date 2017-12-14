@@ -29,7 +29,23 @@
 	</update>
 
 	<update id="setUsed" parameterType="Pool">
-		UPDATE  orderPool set isUsed = 1 where number = #{pool.number}
+		UPDATE  orderPool set orderPool.isUsed = 1 where orderPool.number = #{number}
 	</update>
+
+	<update id="reback" parameterType="Pool">
+		UPDATE  orderPool set orderPool.isUsed = 0 where orderPool.number = #{number}
+	</update>
+
+	<insert id="initTable">
+		CREATE TABLE `orderPool` (
+		  `number` varchar(255) NOT NULL COMMENT '单号',
+		  `isUsed` int(11) NOT NULL DEFAULT '0' COMMENT '是否已经使用',
+		  UNIQUE KEY `uni_num` (`number`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单池'
+	</insert>
+
+	<select id="showTables" resultType="string">
+		show tables
+	</select>
 
 </mapper>
