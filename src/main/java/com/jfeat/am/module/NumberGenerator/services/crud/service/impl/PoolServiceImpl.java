@@ -3,11 +3,13 @@ package com.jfeat.am.module.NumberGenerator.services.crud.service.impl;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.jfeat.am.module.NumberGenerator.services.persistence.model.PageForPool;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
 import com.jfeat.am.module.NumberGenerator.services.persistence.dao.PoolMapper;
 import com.jfeat.am.module.NumberGenerator.services.crud.service.PoolService;
 import com.jfeat.am.common.crud.impl.CRUDServiceOnlyImpl;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolConfig;
+import com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolModel;
 import com.sun.javafx.binding.StringFormatter;
 import net.sf.jsqlparser.expression.StringValue;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -48,12 +47,21 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
     @Resource
     private PoolConfig poolConfig;
 
+    private static  Map<String,List<Pool>> prefixesMap = new HashMap<>();//存放所有的前缀及号码
 
+    private static  Map<String,List<Pool>> suffixesMap = new HashMap<>();//存放所有的后缀及号码
+
+    private static  Map<String,Integer> prefixesPageNumbers = new HashMap<>();//存放所有前缀使用到的页码
+
+    private static Map<String,Integer> suffixesPageNumbers = new HashMap<>();//存放所有后缀使用到的页码
 
     public static String dateForMark = "0";
 
-    public static Integer pageNumber;
+    public static Integer pageNumber = 1;
 
+    public static Long poolsCount;
+
+    private static List<String> keySetlist;
 
     @Override
     public void initPool() {
@@ -61,6 +69,18 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
         List<String> tables = poolMapper.showTables();
         if((!tables.contains("orderPool"))&&(!tables.contains("orderpool"))){
             poolMapper.initTable();
+            List<String> prefixes = poolConfig.getPrefixes();
+            if(prefixes!=null&&prefixes.size()>0&&(!prefixes.get(0).equals("${prefixes}"))){
+                for(String prefix:prefixes){
+                    poolMapper.addPrefix(prefix+"IsUsed");
+                }
+            }
+            List<String> suffixes = poolConfig.getSuffixes();
+            if(suffixes!=null&&suffixes.size()>0&&(!suffixes.get(0).equals("${suffixes}"))){
+                for(String suffix:suffixes){
+                    poolMapper.addPrefix("IsUsed"+suffix);
+                }
+            }
         }
 
         Integer integer = poolMapper.selectCount(new EntityWrapper<Pool>());
@@ -72,14 +92,72 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
         for(int i = 0;i<length;i++){
             number = number + "" +9;
         }
-
+//
         long parseLong = Long.parseLong(number);
+        poolsCount = parseLong+1;
         if(integer>=(parseLong+1)){
             Page p = new Page();
             p.setSize(3000);
             Pool pp = new Pool();
             pp.setIsUsed(0);
             this.pools=poolMapper.selectPage(p,new EntityWrapper<>(pp));
+            Pool te = new Pool();
+            te.setIsUsed(3);
+            if(poolMapper.selectOne(te)!=null){
+                dateForMark = poolMapper.selectOne(te).getNumber();
+            }
+
+
+
+            List<String> prefixes = poolConfig.getPrefixes();
+            if(prefixes!=null&&prefixes.size()>0&&(!prefixes.get(0).equals("${prefixes}"))){
+                for(String prefix:prefixes){
+                    long hasRead = poolMapper.preOrSufCount(prefix+"IsUsed");
+                    PageForPool pageForPool = new PageForPool();
+                    pageForPool.setIndex(0);
+                    long noRead = poolsCount-hasRead;
+                    if(noRead>=3000){
+                        pageForPool.setPageSize(3000);
+                    }else if(noRead==0){
+                        List<String> strs = new ArrayList<>();
+                        strs.add(prefix+"IsUsed");
+                        poolMapper.clearAll(strs);
+                        pageForPool.setPageSize(3000);
+                    }else{
+                        pageForPool.setPageSize(noRead);
+                    }
+                    pageForPool.setPreOrSuf(prefix+"IsUsed");
+                    List<Pool> list = poolMapper.preOrSuf(pageForPool);
+                    prefixesMap.put(prefix,list);
+                    prefixesPageNumbers.put(prefix,pageNumber);
+                }
+            }
+            List<String> suffixes = poolConfig.getSuffixes();
+            if(suffixes!=null&&suffixes.size()>0&&(!suffixes.get(0).equals("${suffixes}"))){
+                for(String suffix:suffixes){
+                    long hasRead = poolMapper.preOrSufCount("IsUsed"+suffix);
+                    PageForPool pageForPool = new PageForPool();
+                    pageForPool.setIndex(0);
+                    long noRead = poolsCount-hasRead;
+                    if(noRead>=3000){
+                        pageForPool.setPageSize(3000);
+                    }else if(noRead==0){
+                        List<String> strs = new ArrayList<>();
+                        strs.add("IsUsed"+suffix);
+                        poolMapper.clearAll(strs);
+                        pageForPool.setPageSize(3000);
+                    }else{
+                        pageForPool.setPageSize(noRead);
+                    }
+                    pageForPool.setPreOrSuf("IsUsed"+suffix);
+                    List<Pool> list = poolMapper.preOrSuf(pageForPool);
+                    suffixesMap.put(suffix,list);
+                    suffixesPageNumbers.put(suffix,pageNumber);
+                }
+            }
+
+
+
             return;
         }
         for(long k = 0;k<=parseLong;k++){
@@ -101,10 +179,18 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
         poolMapper.batchInsert(pools);
 
 
-        addNumber(true);
+        addNumber(true,null,true);
+
+
+
     }
 
-    private void addNumber(boolean isFlag){
+
+
+
+
+
+    private void addNumber(boolean isFlag,String prefixOrSuffix,Boolean isPre){
         if(isFlag){
             Page page = new Page();
             page.setSize(3000);
@@ -113,22 +199,70 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
             Pool pp = new Pool();
             pp.setIsUsed(0);
             pools = poolMapper.selectPage(page, new EntityWrapper<>(pp));
+
+
+            Integer isUsed = poolMapper.preOrSufCount("isUsed");
+            if(isUsed==0){
+                Date date = new Date();
+                String time = new SimpleDateFormat("yyyyMMdd").format(date);
+                poolMapper.addConfig(time);
+            }
+
         }else{
-            pageNumber++;
-            Page page = new Page();
-            page.setSize(2400);
-            page.setCurrent(pageNumber);
-            Pool pp = new Pool();
-            pp.setIsUsed(0);
-            List<Pool> poolList = poolMapper.selectPage(page, new EntityWrapper<>(pp));
-            pools.addAll(poolList);
+
+            if(prefixOrSuffix==null){
+                pageNumber++;
+                Page page = new Page();
+                page.setSize(2400);
+                page.setCurrent(pageNumber);
+                Pool pp = new Pool();
+                pp.setIsUsed(0);
+                List<Pool> poolList = poolMapper.selectPage(page, new EntityWrapper<>(pp));
+                pools.addAll(poolList);
+            }else{
+                Integer integer = null;
+                if(isPre){
+                    integer = prefixesPageNumbers.get(prefixOrSuffix);
+                    Integer a = integer+1;
+                    prefixesPageNumbers.replace(prefixOrSuffix,a);//不知道行不行
+                }else{
+                    integer = suffixesPageNumbers.get(prefixOrSuffix);
+                    Integer a = integer+1;
+                    suffixesPageNumbers.replace(prefixOrSuffix,a);//不知道行不行
+                }
+
+                long hasRead = integer*2400;
+                PageForPool pageForPool = new PageForPool();
+                pageForPool.setIndex(0);
+
+                long noRead = poolsCount-hasRead;
+                if(noRead>=2400){
+                    pageForPool.setPageSize(2400);
+                }else{
+                    pageForPool.setPageSize(noRead);
+                }
+
+                pageForPool.setPreOrSuf(prefixOrSuffix);
+                List<Pool> list = poolMapper.preOrSuf(pageForPool);
+
+                if(isPre){
+                    prefixesMap.get(prefixOrSuffix).addAll(list);
+                }else{
+                    suffixesMap.get(prefixOrSuffix).addAll(list);
+                }
+
+            }
+
         }
     }
+
 
 
     @Override
     @Transactional
     public String getSerialNumber(boolean isFlag,PoolConfig poConfig) {
+        String preOrSuf = null;
+        Integer isPre = 2;
         Date date = new Date();
         String dateMark = new SimpleDateFormat("yyyyMMdd").format(date);
 
@@ -136,26 +270,112 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
         String suffix = poConfig.getSuffix()==null?"":poConfig.getSuffix();//后缀
 
         if(dateMark.compareTo(dateForMark)>0){//第二天
-            poolMapper.clearAll();
-            addNumber(true);
+            List<String> stringList = poolMapper.showField();
+            Set<String> list = new HashSet<>();
+            list.addAll(stringList);
+            list.remove("number");
+            List<String> temps = new ArrayList<>();
+            temps.addAll(list);
+            poolMapper.clearAll(temps);
+            addNumber(true,null,true);
+        }
+
+        if(poConfig.getPrefix()!=null){
+            preOrSuf = poConfig.getPrefix();
+            isPre = 1;
+        }
+        if(poConfig.getSuffix()!=null){
+            preOrSuf = poConfig.getSuffix();
+            isPre = 0;
+        }
+        if(poConfig.getPrefix()!=null&&poConfig.getSuffix()!=null){
+            isPre = 3;//未完成
         }
 
         dateForMark = dateMark;
+        poolMapper.setConfig(dateMark);
+
+
         if(pools.size()<600){
-            addNumber(false);
+            addNumber(false,preOrSuf,null);
+        }
+        if(prefixesMap.size()>0&&isPre==1){
+            if(!prefixesMap.containsKey(preOrSuf))
+                return "There is no corresponding prefix";
+            if(prefixesMap.get(preOrSuf).size()<600)
+                addNumber(false,preOrSuf,true);
+        }
+        if(suffixesMap.size()>0&&isPre==0){
+            if(!suffixesMap.containsKey(preOrSuf))
+                return "There is no corresponding suffix";
+            if(suffixesMap.get(preOrSuf).size()<600)
+                addNumber(false,preOrSuf,false);
         }
         if(isFlag){
-            int i = pools.size() - 1;
+            int i = 600;
             Random random = new Random();
             int nextInt = random.nextInt(i);
-            Pool remove = pools.get(nextInt);
-            poolMapper.setUsed(remove);
-            return prefix+formatDateSpecial(date)+pools.remove(nextInt).getNumber()+suffix;
+
+            if(isPre==2){
+                Pool remove = pools.get(nextInt);
+                PoolModel poolModel = new PoolModel();
+                poolModel.setPreOrsuf("isUsed");
+                poolModel.setNumber(remove.getNumber());
+                poolMapper.setUsed(poolModel);
+                return formatDateSpecial(date)+pools.remove(nextInt).getNumber();
+            }else if(isPre==1){//前缀
+                Pool remove = prefixesMap.get(preOrSuf).get(nextInt);
+                PoolModel poolModel = new PoolModel();
+                poolModel.setNumber(remove.getNumber());
+                poolModel.setPreOrsuf(preOrSuf+"IsUsed");
+                poolMapper.setUsed(poolModel);
+                return preOrSuf+formatDateSpecial(date)+prefixesMap.get(preOrSuf).remove(nextInt).getNumber();
+            }else if(isPre==3){//都有
+                Pool remove = pools.get(nextInt);
+                PoolModel poolModel = new PoolModel();
+                poolModel.setNumber(remove.getNumber());
+                poolModel.setPreOrsuf("isUsed");
+                poolMapper.setUsed(poolModel);
+            }else{//后缀
+                Pool remove = suffixesMap.get(preOrSuf).get(nextInt);
+                PoolModel poolModel = new PoolModel();
+                poolModel.setPreOrsuf("IsUsed"+preOrSuf);
+                poolModel.setNumber(remove.getNumber());
+                poolMapper.setUsed(poolModel);
+                return formatDateSpecial(date)+suffixesMap.get(preOrSuf).remove(nextInt).getNumber()+preOrSuf;
+            }
+
         }
-
-        poolMapper.setUsed(pools.get(0));
-        return prefix+formatDateSpecial(date)+pools.remove(0).getNumber()+suffix;
-
+        int nextInt = 0;
+        if(isPre==2){
+            Pool remove = pools.get(nextInt);
+            PoolModel poolModel = new PoolModel();
+            poolModel.setPreOrsuf("isUsed");
+            poolModel.setNumber(remove.getNumber());
+            poolMapper.setUsed(poolModel);
+            return formatDateSpecial(date)+pools.remove(nextInt).getNumber();
+        }else if(isPre==1){//前缀
+            Pool remove = prefixesMap.get(preOrSuf).get(nextInt);
+            PoolModel poolModel = new PoolModel();
+            poolModel.setNumber(remove.getNumber());
+            poolModel.setPreOrsuf(preOrSuf+"IsUsed");
+            poolMapper.setUsed(poolModel);
+            return preOrSuf+formatDateSpecial(date)+prefixesMap.get(preOrSuf).remove(nextInt).getNumber();
+        }else if(isPre==3){//都有
+            Pool remove = pools.get(nextInt);
+            PoolModel poolModel = new PoolModel();
+            poolModel.setNumber(remove.getNumber());
+            poolModel.setPreOrsuf("isUsed");
+            poolMapper.setUsed(poolModel);
+        }else{//后缀
+            Pool remove = suffixesMap.get(preOrSuf).get(nextInt);
+            PoolModel poolModel = new PoolModel();
+            poolModel.setPreOrsuf("IsUsed"+preOrSuf);
+            poolModel.setNumber(remove.getNumber());
+            poolMapper.setUsed(poolModel);
+            return formatDateSpecial(date)+suffixesMap.get(preOrSuf).remove(nextInt).getNumber()+preOrSuf;
+        }
+        return "服务器异常";
     }
 
     @Override
@@ -174,16 +394,56 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
         return left+left2+right2+right;
     }
 
+    private void setTheKeySetList(){
+        Set<String> prefixeskeySet = prefixesMap.keySet();
+        Set<String> suffixeskeySet = suffixesMap.keySet();
+        keySetlist = new ArrayList<>();
+        keySetlist.addAll(prefixeskeySet);
+        keySetlist.addAll(suffixeskeySet);
+    }
+
     @Override
-    public void reback(long num) {
-        Pool pool = new Pool();
+    public void reback(String num) {
+        String keyOf = "";
+        String preOrSuf = "";
+        if(keySetlist==null)
+            setTheKeySetList();
+        for(String key:keySetlist){
+
+            if(num.contains(preOrSuf)){
+                preOrSuf=key;
+                keyOf = key;
+                num = num.replace(preOrSuf,"");
+            }
+        }
         String n = String.valueOf(num);
         n=n.substring(8);
 
-        pool.setNumber(n);
-        pool.setIsUsed(0);
-        pools.add(pool);
+        PoolModel pool = new PoolModel();
 
+        pool.setNumber(n);
+        if(keyOf.equals("")){
+            pool.setPreOrsuf("isUsed");
+            pools.add(0,pool);
+        }else{
+
+            if(prefixesMap.containsKey(preOrSuf)){
+                if(!prefixesMap.get(preOrSuf).contains(pool)){
+                    prefixesMap.get(preOrSuf).add(0,pool);
+                    pool.setPreOrsuf(keyOf+"IsUsed");
+                }else{
+                    return;
+                }
+            }
+            if(suffixesMap.containsKey(preOrSuf)){
+                if(!suffixesMap.get(preOrSuf).contains(pool)){
+                    suffixesMap.get(preOrSuf).add(0,pool);
+                    pool.setPreOrsuf("IsUsed"+keyOf);
+                }else{
+                    return;
+                }
+            }
+        }
         poolMapper.reback(pool);
     }
 

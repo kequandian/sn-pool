@@ -27,5 +27,5 @@ public interface PoolService  extends CRUDServiceOnly<Pool> {
 
         public String formatDateSpecial(Date date);
 
-        public void reback(long num);
+        public void reback(String num);
 }

@@ -1,14 +1,17 @@
 package com.jfeat.am;
 
 import com.jfeat.am.module.NumberGenerator.services.crud.service.impl.PoolServiceImpl;
+import com.jfeat.am.module.NumberGenerator.services.persistence.dao.PoolMapper;
+import com.jfeat.am.module.NumberGenerator.services.persistence.model.PageForPool;
+import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -24,10 +27,38 @@ public class NumberGeneratorApplicationTests {
 
 		//System.out.println(list.get(0)+"\t"+list.size());
 	}
-
+	@Autowired
+	private PoolMapper poolMapper;
 	@Test
 	public void test(){
-		System.out.println(new PoolServiceImpl().formatDateSpecial(new Date()));
+		//System.out.println(new PoolServiceImpl().formatDateSpecial(new Date()));
+//		List<String> stringList = poolMapper.showField();
+//		Set<String> list = new HashSet<>();
+//		list.addAll(stringList);
+//		list.remove("number");
+//		List<String> temps = new ArrayList<>();
+//		temps.addAll(list);
+//		System.out.println(list);
+//		poolMapper.clearAll(temps);
+		PageForPool pageForPool = new PageForPool();
+		pageForPool.setPreOrSuf("sbIsUsed");
+		pageForPool.setIndex(0);
+		pageForPool.setPageSize(2400);
+		List<Pool> pools = poolMapper.preOrSuf(pageForPool);
+		for(Pool pool:pools){
+			System.out.println(pool.getNumber());
+		}
+	}
+
+	@Test
+	public void test02(){
+		Pool te = new Pool();
+		te.setIsUsed(3);
+		if(poolMapper.selectOne(te)==null){
+			Date date = new Date();
+			String time = new SimpleDateFormat("yyyyMMdd").format(date);
+			poolMapper.addConfig(time);
+		}
 	}
 
 }

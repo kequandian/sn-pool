@@ -1,7 +1,9 @@
 package com.jfeat.am.module.NumberGenerator.services.persistence.dao;
 
+import com.jfeat.am.module.NumberGenerator.services.persistence.model.PageForPool;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public interface PoolMapper extends BaseMapper<Pool> {
 
         public Integer maxUsed();
 
-        public void clearAll();
+        public void clearAll(List<String> list);
 
         public void setUsed(Pool pool);
 
@@ -27,4 +29,16 @@ public interface PoolMapper extends BaseMapper<Pool> {
         public void initTable();
 
         public List<String> showTables();
+
+        public void addPrefix(@Param("prefix") String prefix);
+
+        public List<Pool> preOrSuf(PageForPool pageForPool);
+
+        public List<String> showField();
+
+        public void addConfig(@Param("time") String time);
+
+        public void setConfig(@Param("time") String time);
+
+        public Integer preOrSufCount(@Param("preOrSuf") String preOrSuf);
 }

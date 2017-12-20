@@ -14,7 +14,7 @@
     </sql>
 
 	<insert id="batchInsert" parameterType="java.util.List">
-		INSERT orderPool VALUES
+		INSERT orderPool(number,isUsed) VALUES
 		<foreach collection="list" separator="," index="index" item="item">
 			(#{item.number},#{item.isUsed})
 		</foreach>
@@ -24,16 +24,19 @@
 		SELECT max(isUsed) FROM orderPool
 	</select>
 
-	<update id="clearAll">
-		UPDATE orderPool set isUsed = 0
+	<update id="clearAll" parameterType="java.util.List">
+		UPDATE orderPool set
+		<foreach collection="list" separator="," index="index" item="item">
+			${item} = 0
+		</foreach>
 	</update>
 
-	<update id="setUsed" parameterType="Pool">
-		UPDATE  orderPool set orderPool.isUsed = 1 where orderPool.number = #{number}
+	<update id="setUsed" parameterType="com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolModel">
+		UPDATE  orderPool set orderPool.${preOrsuf} = 1 where orderPool.number = #{number}
 	</update>
 
-	<update id="reback" parameterType="Pool">
-		UPDATE  orderPool set orderPool.isUsed = 0 where orderPool.number = #{number}
+	<update id="reback" parameterType="com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolModel">
+		UPDATE  orderPool set orderPool.${preOrsuf} = 0 where orderPool.number = #{number}
 	</update>
 
 	<insert id="initTable">
@@ -44,8 +47,32 @@
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单池'
 	</insert>
 
+	<delete id="addPrefix" parameterType="string">
+		ALTER TABLE orderPool ADD ${prefix} SMALLINT(5) default 0
+	</delete>
+
 	<select id="showTables" resultType="string">
 		show tables
+	</select>
+
+	<select id="preOrSuf" parameterType="com.jfeat.am.module.NumberGenerator.services.persistence.model.PageForPool" resultType="Pool">
+		select number,${preOrSuf} AS isUsed from orderPool WHERE ${preOrSuf}=0  limit #{index},#{pageSize}
+	</select>
+
+	<select id="showField" resultType="string">
+		select COLUMN_NAME from information_schema.COLUMNS where table_name = 'orderPool'
+	</select>
+
+	<insert id="addConfig" parameterType="string">
+		INSERT  INTO orderPool(number,isUsed) VALUES (#{time},3)
+	</insert>
+
+	<update id="setConfig" parameterType="string">
+		UPDATE orderPool SET NUMBER = #{time} WHERE isUsed = 3
+	</update>
+
+	<select id="preOrSufCount" parameterType="string" resultType="integer">
+		SELECT count(*) FROM orderPool WHERE ${preOrSuf} = 1
 	</select>
 
 </mapper>
