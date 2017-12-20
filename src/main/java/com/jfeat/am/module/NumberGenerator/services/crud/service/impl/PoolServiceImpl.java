@@ -63,6 +63,8 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
 
     private static List<String> keySetlist;
 
+    private static List<String> rebackNumber=new ArrayList<>();
+
     @Override
     public void initPool() {
         this.pools = new CopyOnWriteArrayList<>();
@@ -428,16 +430,18 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
         }else{
 
             if(prefixesMap.containsKey(preOrSuf)){
-                if(!prefixesMap.get(preOrSuf).contains(pool)){
-                    prefixesMap.get(preOrSuf).add(0,pool);
+                if(!rebackNumber.contains(pool.getNumber())){
+                    rebackNumber.add(pool.getNumber());
+                    prefixesMap.get(preOrSuf).add(0,(Pool)pool);
                     pool.setPreOrsuf(keyOf+"IsUsed");
                 }else{
                     return;
                 }
             }
             if(suffixesMap.containsKey(preOrSuf)){
-                if(!suffixesMap.get(preOrSuf).contains(pool)){
-                    suffixesMap.get(preOrSuf).add(0,pool);
+                if(!rebackNumber.contains(pool.getNumber())){
+                    rebackNumber.add(pool.getNumber());
+                    suffixesMap.get(preOrSuf).add(0,(Pool)pool);
                     pool.setPreOrsuf("IsUsed"+keyOf);
                 }else{
                     return;
