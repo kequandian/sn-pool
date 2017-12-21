@@ -18,7 +18,7 @@ import java.util.List;
 public interface PoolMapper extends BaseMapper<Pool> {
         public void batchInsert(List<Pool> pools);
 
-        public Integer maxUsed();
+        public Integer maxUsed(@Param("num")Integer num);
 
         public void clearAll(List<String> list);
 

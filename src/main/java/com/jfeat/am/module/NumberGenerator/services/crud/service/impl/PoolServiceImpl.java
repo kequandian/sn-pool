@@ -43,6 +43,7 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
 
     public static List<Pool> pools;
 
+    private static Integer num = 0;
 
     @Resource
     private PoolConfig poolConfig;
@@ -203,10 +204,12 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
             pools = poolMapper.selectPage(page, new EntityWrapper<>(pp));
 
 
-            Integer isUsed = poolMapper.preOrSufCount("isUsed");
-            if(isUsed==0){
+            Integer isUsed = poolMapper.maxUsed(num++);
+
+            if(isUsed!=3){
                 Date date = new Date();
                 String time = new SimpleDateFormat("yyyyMMdd").format(date);
+                dateForMark = time;
                 poolMapper.addConfig(time);
             }
 
@@ -280,6 +283,7 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
             temps.addAll(list);
             poolMapper.clearAll(temps);
             addNumber(true,null,true);
+            poolMapper.setConfig(dateMark);
         }
 
         if(poConfig.getPrefix()!=null){
@@ -294,9 +298,9 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
             isPre = 3;//未完成
         }
 
-        dateForMark = dateMark;
-        poolMapper.setConfig(dateMark);
 
+
+        dateForMark = dateMark;
 
         if(pools.size()<600){
             addNumber(false,preOrSuf,null);
@@ -412,7 +416,7 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
             setTheKeySetList();
         for(String key:keySetlist){
 
-            if(num.contains(preOrSuf)){
+            if(num.contains(key)){
                 preOrSuf=key;
                 keyOf = key;
                 num = num.replace(preOrSuf,"");
@@ -432,7 +436,7 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
             if(prefixesMap.containsKey(preOrSuf)){
                 if(!rebackNumber.contains(pool.getNumber())){
                     rebackNumber.add(pool.getNumber());
-                    prefixesMap.get(preOrSuf).add(0,(Pool)pool);
+                    prefixesMap.get(preOrSuf).add(0,pool);
                     pool.setPreOrsuf(keyOf+"IsUsed");
                 }else{
                     return;
@@ -441,7 +445,7 @@ public class PoolServiceImpl  extends CRUDServiceOnlyImpl<Pool> implements PoolS
             if(suffixesMap.containsKey(preOrSuf)){
                 if(!rebackNumber.contains(pool.getNumber())){
                     rebackNumber.add(pool.getNumber());
-                    suffixesMap.get(preOrSuf).add(0,(Pool)pool);
+                    suffixesMap.get(preOrSuf).add(0,pool);
                     pool.setPreOrsuf("IsUsed"+keyOf);
                 }else{
                     return;

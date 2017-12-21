@@ -20,8 +20,8 @@
 		</foreach>
 	</insert>
 
-	<select id="maxUsed" resultType="java.lang.Integer">
-		SELECT max(isUsed) FROM orderPool
+	<select id="maxUsed" resultType="java.lang.Integer" parameterType="integer">
+		SELECT max(isUsed) FROM orderPool WHERE #{num} = #{num}
 	</select>
 
 	<update id="clearAll" parameterType="java.util.List">

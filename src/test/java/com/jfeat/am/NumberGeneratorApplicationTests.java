@@ -61,4 +61,9 @@ public class NumberGeneratorApplicationTests {
 		}
 	}
 
+	@Test
+	public void test03(){
+		System.out.println(poolMapper.maxUsed(1));
+	}
+
 }

@@ -1,11 +1,11 @@
 PoolConfig:
     minlength: 5
     prefixes:
-            - sb
-            - sk
-    suffixes:
-            - la
-            - lb
+            - account
+            - contact
+            - salesLeads
+            - salesChance
+            - activity
 
 ##########################################################
 ##################  所有profile共有的配置  #################
@@ -78,7 +78,7 @@ mybatis-plus:
 spring:
   profiles: test
   datasource:
-      url: jdbc:mysql://127.0.0.1:3306/test?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://127.0.0.1:3306/power?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
       username: root
       password: root
       filters: log4j,wall,mergeStat
@@ -107,7 +107,7 @@ am:
 spring:
   profiles: dev
   datasource:
-      url: jdbc:mysql://127.0.0.1:3306/test?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://127.0.0.1:3306/power?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
       username: root
       password: root
       filters: log4j,wall,mergeStat
@@ -134,7 +134,7 @@ am:
 spring:
   profiles: produce
   datasource:
-      url: jdbc:mysql://112.74.26.228:3306/test?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://112.74.26.228:3306/power?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
       username: jfeat
       password: jfeat
       filters: log4j,wall,mergeStat
