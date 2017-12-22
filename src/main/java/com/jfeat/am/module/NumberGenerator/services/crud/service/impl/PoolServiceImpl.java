@@ -12,11 +12,17 @@ import com.jfeat.am.module.NumberGenerator.services.crud.service.PoolService;
 import com.jfeat.am.common.crud.impl.CRUDServiceOnlyImpl;
 import com.jfeat.am.module.NumberGenerator.config.PoolConfig;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolModel;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,6 +38,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Service
 public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolService {
 
+    @Resource
+    private SqlSessionFactory sqlSessionFactory;
 
     @Resource
     private PoolMapper poolMapper;
@@ -66,13 +74,20 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
 
     private static List<String> rebackNumber = new ArrayList<>();
 
-    private void initTable() {
+    private void initTable() throws SQLException {
         List<String> tables = poolMapper.showTables();
         if ((!tables.contains("orderPool")) && (!tables.contains("orderpool"))) {
             poolMapper.initTable();
         }
 
-        List<String> columns = poolMapper.showField();
+        Connection conn = sqlSessionFactory.openSession().getConnection();
+        DatabaseMetaData data = conn.getMetaData();
+        ResultSet rs = data.getColumns(null, null, "orderPool", "%");
+        List<String> columns = new ArrayList<>();
+        while (rs.next()) {
+            columns.add(rs.getString("COLUMN_NAME"));
+        }
+
         List<String> prefixes = poolConfig.getPrefixes();
         if (prefixes != null && prefixes.size() > 0 && (!prefixes.get(0).equals("${prefixes}"))) {
             for (String prefix : prefixes) {
@@ -196,9 +211,13 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
     public void initPool() {
         this.pools = new CopyOnWriteArrayList<>();
 
-        initTable();
-        initData();
-
+        try {
+            initTable();
+            initData();
+        }
+        catch (SQLException ex) {
+            throw new BusinessException(BizExceptionEnum.DATABASE_CONNECT_ERROR);
+        }
     }
 
 

@@ -14,7 +14,7 @@
     </sql>
 
 	<insert id="batchInsert" parameterType="java.util.List">
-		INSERT orderPool(number,isUsed) VALUES
+		INSERT INTO orderPool(number,isUsed) VALUES
 		<foreach collection="list" separator="," index="index" item="item">
 			(#{item.number},#{item.isUsed})
 		</foreach>
