@@ -5,6 +5,7 @@ CREATE TABLE `orderPool` (
   `number` varchar(255) NOT NULL COMMENT '单号',
   `isUsed` SMALLINT(5) NOT NULL DEFAULT '0' COMMENT '是否已经使用',
   UNIQUE KEY `uni_num` (`number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单池'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
