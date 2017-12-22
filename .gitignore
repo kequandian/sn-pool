@@ -7,6 +7,4 @@ build/*
 *.swp
 *.log
 *.db
-rib*
-sb*
 LOG_*
