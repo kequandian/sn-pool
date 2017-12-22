@@ -3,10 +3,9 @@ package com.jfeat.am.module.NumberGenerator.services.crud.service;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
 
 import com.jfeat.am.common.crud.CRUDServiceOnly;
-import com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolConfig;
+import com.jfeat.am.module.NumberGenerator.config.PoolConfig;
 
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -21,7 +20,10 @@ import java.util.List;
 public interface PoolService  extends CRUDServiceOnly<Pool> {
         public void initPool();
 
-        public String getSerialNumber(boolean isFlag,PoolConfig poolConfig);
+        public String getSerialNumber(boolean isRandom,PoolConfig poolConfig);
+
+        public String getSerialNumber();
+        public String getSerialNumber(String prefix);
 
         public void backupData();
 

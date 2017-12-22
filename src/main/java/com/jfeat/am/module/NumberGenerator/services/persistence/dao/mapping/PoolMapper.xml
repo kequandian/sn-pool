@@ -55,7 +55,7 @@
 		show tables
 	</select>
 
-	<select id="preOrSuf" parameterType="com.jfeat.am.module.NumberGenerator.services.persistence.model.PageForPool" resultType="Pool">
+	<select id="preOrSuf" parameterType="com.jfeat.am.module.NumberGenerator.config.PageForPool" resultType="Pool">
 		select number,${preOrSuf} AS isUsed from orderPool WHERE ${preOrSuf}=0  limit #{index},#{pageSize}
 	</select>
 

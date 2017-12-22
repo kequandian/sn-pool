@@ -1,14 +1,10 @@
 package com.jfeat.am;
 
-import com.jfeat.am.module.NumberGenerator.services.crud.service.impl.PoolServiceImpl;
 import com.jfeat.am.module.NumberGenerator.services.persistence.dao.PoolMapper;
-import com.jfeat.am.module.NumberGenerator.services.persistence.model.PageForPool;
+import com.jfeat.am.module.NumberGenerator.config.PageForPool;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.SimpleDateFormat;
 import java.util.*;

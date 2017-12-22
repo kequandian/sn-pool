@@ -4,18 +4,15 @@ import com.jfeat.am.common.constant.tips.SuccessTip;
 import com.jfeat.am.common.constant.tips.Tip;
 import com.jfeat.am.common.controller.BaseController;
 import com.jfeat.am.module.NumberGenerator.services.crud.service.PoolService;
-import com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolConfig;
-import org.apache.ibatis.annotations.Param;
+import com.jfeat.am.module.NumberGenerator.config.PoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.websocket.server.PathParam;
 
 /**
  * Created by Code Generator on 2017-12-05
  */
 @RestController
-@RequestMapping("/api/NumberGenerator")
+@RequestMapping("/api/sn")
 public class NumberGeneratorEndpoint extends BaseController {
 
 

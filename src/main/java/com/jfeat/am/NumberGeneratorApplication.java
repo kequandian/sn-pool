@@ -17,18 +17,5 @@ public class NumberGeneratorApplication {
 		context.registerShutdownHook();
 	}
 
-	@Autowired
-	private PoolService poolService;
-
-	@PostConstruct
-	public void initPools(){
-		poolService.initPool();
-	}
-
-	@PreDestroy
-	public void preDestroy(){
-
-	}
-
 }
 

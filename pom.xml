@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.jfeat</groupId>
-	<artifactId>NumberGenerator</artifactId>
-	<version>1.0.0</version>
+	<artifactId>sn-generator</artifactId>
+	<version>1.0.1</version>
 	<packaging>jar</packaging>
 
-	<name>NumberGenerator</name>
-	<description>NumberGenerator</description>
+	<name>Serial Number Generator</name>
+	<description>Serial Number Generator</description>
 
 	<parent>
 		<groupId>com.jfeat</groupId>
@@ -33,18 +33,13 @@
 		</dependency>
 		<dependency>
 			<groupId>com.jfeat</groupId>
-			<artifactId>sb-account</artifactId>
-			<version>${sb-account.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jfeat</groupId>
 			<artifactId>sb-crud</artifactId>
 			<version>${sb-crud.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jfeat</groupId>
-			<artifactId>power-base</artifactId>
-			<version>1.0.0</version>
+			<artifactId>sb-account</artifactId>
+			<version>${sb-account.version}</version>
 		</dependency>
 
 		<!--spring boot依赖-->
@@ -200,12 +195,6 @@
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>${swagger.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.jfeat</groupId>
-			<artifactId>db-snapshot</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 

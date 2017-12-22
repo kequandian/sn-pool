@@ -1,4 +1,4 @@
-package com.jfeat.am.module.NumberGenerator.services.persistence.model;
+package com.jfeat.am.module.NumberGenerator.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,6 +1,6 @@
 package com.jfeat.am.module.NumberGenerator.services.persistence.dao;
 
-import com.jfeat.am.module.NumberGenerator.services.persistence.model.PageForPool;
+import com.jfeat.am.module.NumberGenerator.config.PageForPool;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;

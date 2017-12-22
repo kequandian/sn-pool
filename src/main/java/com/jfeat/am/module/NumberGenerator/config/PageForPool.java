@@ -1,4 +1,4 @@
-package com.jfeat.am.module.NumberGenerator.services.persistence.model;
+package com.jfeat.am.module.NumberGenerator.config;
 
 /**
  * Created by Silent-Y on 2017/12/18.
