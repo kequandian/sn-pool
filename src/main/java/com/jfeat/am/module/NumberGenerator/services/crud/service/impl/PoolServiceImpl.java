@@ -394,7 +394,7 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
 
     @Override
     public String formatDateSpecial(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMyyyydd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         String format = simpleDateFormat.format(date);
         String left = format.substring(0, 2);
         String left2 = format.substring(2, 4);
