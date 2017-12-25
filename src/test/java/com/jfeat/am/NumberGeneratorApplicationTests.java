@@ -3,6 +3,7 @@ package com.jfeat.am;
 import com.jfeat.am.module.NumberGenerator.services.persistence.dao.PoolMapper;
 import com.jfeat.am.module.NumberGenerator.config.PageForPool;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
+import com.jfeat.am.NumberGeneratorApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.*;
 
 @ActiveProfiles(profiles = "test")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = AmApplication.class)
+@SpringBootTest(classes = NumberGeneratorApplication.class)
 @WebAppConfiguration
 @Transactional //测试之后数据可回滚
 public class NumberGeneratorApplicationTests {
