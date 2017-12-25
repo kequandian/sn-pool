@@ -1,11 +1,17 @@
 PoolConfig:
     minlength: 5
     prefixes:
-            - account
-            - contact
-            - salesLeads
-            - salesChance
-            - activity
+            - ACT
+            - CC
+            - ACC
+            - XX
+            - XJ
+
+##  ACT - 活动
+##  CC  - 联系人
+##  ACC - 账户
+##  XX  - 销售线索
+##  XJ  - 销售机会
 
 ##########################################################
 ##################  所有profile共有的配置  #################
