@@ -3,22 +3,20 @@ package com.jfeat.am.module.NumberGenerator.services.crud.service.impl;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.jfeat.am.common.crud.impl.CRUDServiceOnlyImpl;
 import com.jfeat.am.common.exception.BizExceptionEnum;
 import com.jfeat.am.common.exception.BusinessException;
 import com.jfeat.am.module.NumberGenerator.config.PageForPool;
-import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
-import com.jfeat.am.module.NumberGenerator.services.persistence.dao.PoolMapper;
-import com.jfeat.am.module.NumberGenerator.services.crud.service.PoolService;
-import com.jfeat.am.common.crud.impl.CRUDServiceOnlyImpl;
 import com.jfeat.am.module.NumberGenerator.config.PoolConfig;
+import com.jfeat.am.module.NumberGenerator.services.crud.service.PoolService;
+import com.jfeat.am.module.NumberGenerator.services.persistence.dao.PoolMapper;
+import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolModel;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;

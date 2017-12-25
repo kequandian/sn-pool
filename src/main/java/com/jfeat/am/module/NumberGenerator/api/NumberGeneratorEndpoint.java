@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.*;
  * Created by Code Generator on 2017-12-05
  */
 @RestController
-@RequestMapping("/api/sn")
+@RequestMapping("/api/pub/sn")
 public class NumberGeneratorEndpoint extends BaseController {
-
 
     @Autowired
     private PoolService poolService;
