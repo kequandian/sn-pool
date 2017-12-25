@@ -29,9 +29,9 @@ public class NumberGeneratorEndpoint extends BaseController {
         return SuccessTip.create(poolService.getSerialNumber(false,new PoolConfig(prefix,suffix)));
     }
 
-    @GetMapping("/reback")
-    public Tip rebackNumber(@RequestParam(name ="number",required = true)String num){
-        poolService.reback(num);
+    @GetMapping("/rollback")
+    public Tip rollbackNumber(@RequestParam(name ="number",required = true)String number){
+        poolService.rollback(number);
         return SuccessTip.create();
     }
 

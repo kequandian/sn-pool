@@ -412,7 +412,7 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
     }
 
     @Override
-    public void reback(String num) {
+    public void rollback(String num) {
         String keyOf = "";
         String preOrSuf = "";
         if (keySetlist == null)
