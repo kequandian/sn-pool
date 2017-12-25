@@ -457,8 +457,6 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
         }
         poolMapper.reback(pool);
     }
-
-
 }
 
 

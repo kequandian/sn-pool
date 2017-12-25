@@ -47,7 +47,7 @@ public class NumberGeneratorApplicationTests {
 //		System.out.println(list);
 //		poolMapper.clearAll(temps);
 		PageForPool pageForPool = new PageForPool();
-		pageForPool.setPreOrSuf("accountIsUsed");
+		pageForPool.setPreOrSuf("isUsed");
 		pageForPool.setIndex(0);
 		pageForPool.setPageSize(2400);
 		List<Pool> pools = poolMapper.preOrSuf(pageForPool);
