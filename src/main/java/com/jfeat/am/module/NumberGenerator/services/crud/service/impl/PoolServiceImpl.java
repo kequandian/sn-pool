@@ -117,9 +117,58 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
         for (int i = 0; i < length; i++) {
             number = number + "" + 9;
         }
-//
+
         long parseLong = Long.parseLong(number);
         poolsCount = parseLong + 1;
+
+        List<String> prefixes = poolConfig.getPrefixes();
+        if (prefixes != null && prefixes.size() > 0 && (!prefixes.get(0).equals("${prefixes}"))) {
+            for (String prefix : prefixes) {
+                long hasRead = poolMapper.preOrSufCount(prefix + "IsUsed");
+                PageForPool pageForPool = new PageForPool();
+                pageForPool.setIndex(0);
+                long noRead = poolsCount - hasRead;
+                if (noRead >= 3000) {
+                    pageForPool.setPageSize(3000);
+                } else if (noRead == 0) {
+                    List<String> strs = new ArrayList<>();
+                    strs.add(prefix + "IsUsed");
+                    poolMapper.clearAll(strs);
+                    pageForPool.setPageSize(3000);
+                } else {
+                    pageForPool.setPageSize(noRead);
+                }
+                pageForPool.setPreOrSuf(prefix + "IsUsed");
+                List<Pool> list = poolMapper.preOrSuf(pageForPool);
+                prefixesMap.put(prefix, list);
+                prefixesPageNumbers.put(prefix, pageNumber);
+            }
+        }
+        List<String> suffixes = poolConfig.getSuffixes();
+        if (suffixes != null && suffixes.size() > 0 && (!suffixes.get(0).equals("${suffixes}"))) {
+            for (String suffix : suffixes) {
+                long hasRead = poolMapper.preOrSufCount("IsUsed" + suffix);
+                PageForPool pageForPool = new PageForPool();
+                pageForPool.setIndex(0);
+                long noRead = poolsCount - hasRead;
+                if (noRead >= 3000) {
+                    pageForPool.setPageSize(3000);
+                } else if (noRead == 0) {
+                    List<String> strs = new ArrayList<>();
+                    strs.add("IsUsed" + suffix);
+                    poolMapper.clearAll(strs);
+                    pageForPool.setPageSize(3000);
+                } else {
+                    pageForPool.setPageSize(noRead);
+                }
+                pageForPool.setPreOrSuf("IsUsed" + suffix);
+                List<Pool> list = poolMapper.preOrSuf(pageForPool);
+                suffixesMap.put(suffix, list);
+                suffixesPageNumbers.put(suffix, pageNumber);
+            }
+        }
+//
+
         if (integer >= (parseLong + 1)) {
             Page p = new Page();
             p.setSize(3000);
@@ -131,56 +180,6 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
             if (poolMapper.selectOne(te) != null) {
                 dateForMark = poolMapper.selectOne(te).getNumber();
             }
-
-
-            List<String> prefixes = poolConfig.getPrefixes();
-            if (prefixes != null && prefixes.size() > 0 && (!prefixes.get(0).equals("${prefixes}"))) {
-                for (String prefix : prefixes) {
-                    long hasRead = poolMapper.preOrSufCount(prefix + "IsUsed");
-                    PageForPool pageForPool = new PageForPool();
-                    pageForPool.setIndex(0);
-                    long noRead = poolsCount - hasRead;
-                    if (noRead >= 3000) {
-                        pageForPool.setPageSize(3000);
-                    } else if (noRead == 0) {
-                        List<String> strs = new ArrayList<>();
-                        strs.add(prefix + "IsUsed");
-                        poolMapper.clearAll(strs);
-                        pageForPool.setPageSize(3000);
-                    } else {
-                        pageForPool.setPageSize(noRead);
-                    }
-                    pageForPool.setPreOrSuf(prefix + "IsUsed");
-                    List<Pool> list = poolMapper.preOrSuf(pageForPool);
-                    prefixesMap.put(prefix, list);
-                    prefixesPageNumbers.put(prefix, pageNumber);
-                }
-            }
-            List<String> suffixes = poolConfig.getSuffixes();
-            if (suffixes != null && suffixes.size() > 0 && (!suffixes.get(0).equals("${suffixes}"))) {
-                for (String suffix : suffixes) {
-                    long hasRead = poolMapper.preOrSufCount("IsUsed" + suffix);
-                    PageForPool pageForPool = new PageForPool();
-                    pageForPool.setIndex(0);
-                    long noRead = poolsCount - hasRead;
-                    if (noRead >= 3000) {
-                        pageForPool.setPageSize(3000);
-                    } else if (noRead == 0) {
-                        List<String> strs = new ArrayList<>();
-                        strs.add("IsUsed" + suffix);
-                        poolMapper.clearAll(strs);
-                        pageForPool.setPageSize(3000);
-                    } else {
-                        pageForPool.setPageSize(noRead);
-                    }
-                    pageForPool.setPreOrSuf("IsUsed" + suffix);
-                    List<Pool> list = poolMapper.preOrSuf(pageForPool);
-                    suffixesMap.put(suffix, list);
-                    suffixesPageNumbers.put(suffix, pageNumber);
-                }
-            }
-
-
             return;
         }
         for (long k = 0; k <= parseLong; k++) {
@@ -255,11 +254,11 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
                 if (isPre) {
                     integer = prefixesPageNumbers.get(prefixOrSuffix);
                     Integer a = integer + 1;
-                    prefixesPageNumbers.replace(prefixOrSuffix, a);//不知道行不行
+                    prefixesPageNumbers.put(prefixOrSuffix,a);
                 } else {
                     integer = suffixesPageNumbers.get(prefixOrSuffix);
                     Integer a = integer + 1;
-                    suffixesPageNumbers.replace(prefixOrSuffix, a);//不知道行不行
+                    suffixesPageNumbers.put(prefixOrSuffix,a);
                 }
 
                 long hasRead = integer * 2400;
@@ -273,12 +272,16 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
                     pageForPool.setPageSize(noRead);
                 }
 
-                pageForPool.setPreOrSuf(prefixOrSuffix);
-                List<Pool> list = poolMapper.preOrSuf(pageForPool);
+
+
 
                 if (isPre) {
+                    pageForPool.setPreOrSuf(prefixOrSuffix+"IsUsed");
+                    List<Pool> list = poolMapper.preOrSuf(pageForPool);
                     prefixesMap.get(prefixOrSuffix).addAll(list);
                 } else {
+                    pageForPool.setPreOrSuf("IsUsed"+prefixOrSuffix);
+                    List<Pool> list = poolMapper.preOrSuf(pageForPool);
                     suffixesMap.get(prefixOrSuffix).addAll(list);
                 }
 

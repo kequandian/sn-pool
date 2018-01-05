@@ -32,9 +32,21 @@
 		</dependency>
 		<dependency>
 			<groupId>com.jfeat</groupId>
+			<artifactId>power-base</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jfeat</groupId>
 			<artifactId>sb-crud</artifactId>
 			<version>${sb-crud.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.jfeat</groupId>
+			<artifactId>sb-account</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 
 		<!--spring boot依赖-->
 		<dependency>
@@ -64,6 +76,13 @@
 			<artifactId>mybatisplus-spring-boot-starter</artifactId>
 			<version>${mybatisplus-spring-boot-starter.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus</artifactId>
+			<version>${mybatisplus.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
@@ -195,22 +214,23 @@
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>sb-code-generator</artifactId>
-				<groupId>com.jfeat</groupId>
-				<version>1.0.2</version>
-				<configuration>
-					<moduleName>NumberGenerator</moduleName>
-					<dbUrl>jdbc:mysql://localhost:3306/test?autoReconnect=true</dbUrl>
-					<username>root</username>
-					<password>root</password>
-					<outputDir>src\\main\\java</outputDir>
-					<parentPackage>com.jfeat.am.module</parentPackage>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<skip>${skipStandalone}</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>standalone</classifier>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -237,6 +257,10 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
@@ -269,5 +293,4 @@
 			<url>http://114.215.187.140:8081/repository/internal</url>
 		</repository>
 	</repositories>
-
 </project>
