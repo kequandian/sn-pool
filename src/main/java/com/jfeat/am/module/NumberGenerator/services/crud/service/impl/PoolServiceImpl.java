@@ -369,7 +369,11 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
             poolModel.setNumber(remove.getNumber());
             poolModel.setPreOrsuf(preOrSuf + "IsUsed");
             poolMapper.setUsed(poolModel);
-            return preOrSuf + formatDateSpecial(date) + prefixesMap.get(preOrSuf).remove(nextInt).getNumber();
+            String returningNum = preOrSuf + formatDateSpecial(date) + prefixesMap.get(preOrSuf).remove(nextInt).getNumber();
+            if(rebackNumber.contains(returningNum)){
+                rebackNumber.remove(returningNum);
+            }
+            return returningNum;
         } else if (isPre == 3) {//都有
             Pool remove = pools.get(nextInt);
             PoolModel poolModel = new PoolModel();
@@ -382,7 +386,11 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
             poolModel.setPreOrsuf("IsUsed" + preOrSuf);
             poolModel.setNumber(remove.getNumber());
             poolMapper.setUsed(poolModel);
-            return formatDateSpecial(date) + suffixesMap.get(preOrSuf).remove(nextInt).getNumber() + preOrSuf;
+            String returningNum = formatDateSpecial(date) + suffixesMap.get(preOrSuf).remove(nextInt).getNumber() + preOrSuf;
+            if(rebackNumber.contains(returningNum)){
+                rebackNumber.remove(returningNum);
+            }
+            return returningNum;
         }
 
         throw new BusinessException(BizExceptionEnum.SERVER_ERROR);
@@ -438,22 +446,24 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
         } else {
 
             if (prefixesMap.containsKey(preOrSuf)) {
-                if (!rebackNumber.contains(pool.getNumber())) {
-                    rebackNumber.add(pool.getNumber());
+                if (!rebackNumber.contains(preOrSuf+num)) {
+                    rebackNumber.add(preOrSuf+num);
                     prefixesMap.get(preOrSuf).add(0, pool);
                     pool.setPreOrsuf(keyOf + "IsUsed");
                 } else {
                     return;
                 }
             }
-            if (suffixesMap.containsKey(preOrSuf)) {
-                if (!rebackNumber.contains(pool.getNumber())) {
-                    rebackNumber.add(pool.getNumber());
+            else if (suffixesMap.containsKey(preOrSuf)) {
+                if (!rebackNumber.contains(num+preOrSuf)) {
+                    rebackNumber.add(num+preOrSuf);
                     suffixesMap.get(preOrSuf).add(0, pool);
                     pool.setPreOrsuf("IsUsed" + keyOf);
                 } else {
                     return;
                 }
+            }else{
+                throw new RuntimeException("参数错误");
             }
         }
         poolMapper.reback(pool);

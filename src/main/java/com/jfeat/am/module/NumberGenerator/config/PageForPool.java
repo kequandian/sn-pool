@@ -8,7 +8,6 @@ public class PageForPool {
     private long pageSize;
     private String preOrSuf;
 
-
     public long getIndex() {
         return index;
     }
