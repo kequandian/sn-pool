@@ -1,3 +1,4 @@
 #!/bin/sh
 
-java -jar target/sn-generator-1.0.1-standalone.jar
+cd ~/modules
+java -jar sn-generator-1.0.1-standalone.jar 
