@@ -19,7 +19,15 @@ public class AESEncoder {
     private static String CHARSET = "utf-8";
     private static String encodeRules = "power";
 
-    private static SecureRandom secureRandom = new SecureRandom(encodeRules.getBytes());
+    private static SecureRandom secureRandom ;
+    static{
+        try {
+            secureRandom = SecureRandom.getInstance("SHA1PRNG");
+            secureRandom.setSeed(encodeRules.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
     /*
      * AES对称加密
      * encodeRules 加密规则
