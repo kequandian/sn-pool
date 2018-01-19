@@ -16,7 +16,6 @@ import javax.crypto.NoSuchPaddingException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 /**
  * Created by Code Generator on 2017-12-05
@@ -54,8 +53,8 @@ public class NumberGeneratorEndpoint extends BaseController {
 
     @GetMapping("/test")
     public Tip test(@RequestParam(name="number",required = true) String number) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeyException {
-        return SuccessTip.create(new SecureRandom("power".getBytes()));
+        return SuccessTip.create(AESEncoder.AESEncoder(number));
     }
-
+    
 
 }
