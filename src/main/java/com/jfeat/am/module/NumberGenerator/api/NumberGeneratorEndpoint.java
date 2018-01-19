@@ -6,6 +6,7 @@ import com.jfeat.am.common.controller.BaseController;
 import com.jfeat.am.module.NumberGenerator.services.crud.service.Identify;
 import com.jfeat.am.module.NumberGenerator.services.crud.service.PoolService;
 import com.jfeat.am.module.NumberGenerator.config.PoolConfig;
+import com.jfeat.am.module.NumberGenerator.services.crud.service.impl.AESEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +49,18 @@ public class NumberGeneratorEndpoint extends BaseController {
             throw new IllegalArgumentException("rollback number is illegal");
         }
         return SuccessTip.create();
+    }
+
+    @GetMapping("/test")
+    public Tip test(@RequestParam(name="number",required = true) String number) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeyException {
+        return SuccessTip.create(AESEncoder.AESEncoder(number));
+    }
+
+    @GetMapping("/test2")
+    public Tip test2(@RequestParam(name="number",required = true) String number) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeyException {
+        String num = number.substring(0,number.length()-3);
+
+        return SuccessTip.create(AESEncoder.AESEncoder(num));
     }
 
 }
