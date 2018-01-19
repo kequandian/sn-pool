@@ -19,7 +19,7 @@ public class AESEncoder {
     private static String CHARSET = "utf-8";
     private static String encodeRules = "power";
 
-    private static byte[] encodeRules_byte = "power".getBytes();
+    private static SecureRandom secureRandom = new SecureRandom(encodeRules.getBytes());
     /*
      * AES对称加密
      * encodeRules 加密规则
@@ -42,7 +42,6 @@ public class AESEncoder {
 
     private static Cipher initCipher(Integer mode) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(AES);//创建一个秘钥生成器，指定加密类型为AES对称加密
-        SecureRandom secureRandom = new SecureRandom(encodeRules_byte);
         keyGenerator.init(128,secureRandom);//初始化生成器，使用128位加密，也可以192,256位
         SecretKey secretKey = new SecretKeySpec(keyGenerator.generateKey().getEncoded(),AES);//创建秘钥
         Cipher cipher = Cipher.getInstance(AES);//创建AES类型的密码器

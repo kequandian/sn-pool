@@ -55,6 +55,6 @@ public class NumberGeneratorEndpoint extends BaseController {
     public Tip test(@RequestParam(name="number",required = true) String number) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeyException {
         return SuccessTip.create(AESEncoder.AESEncoder(number));
     }
-    
+
 
 }
