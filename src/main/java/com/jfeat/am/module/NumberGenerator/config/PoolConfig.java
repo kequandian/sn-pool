@@ -15,12 +15,14 @@ import java.util.List;
 public class PoolConfig {
     private String prefix;
     private String suffix;
-    @Value("${PoolConfig.minlength}")
+
     private String length;
-    @Value("${prefixes}")
-    private List<String> prefixes = new ArrayList<>();//存放所有前缀
-    @Value("${suffixes}")
-    private List<String> suffixes = new ArrayList<>();//存放所有的后缀
+
+    //存放所有前缀
+    private List<String> prefixes = new ArrayList<>();
+
+    //存放所有的后缀
+    private List<String> suffixes = new ArrayList<>();
 
     public List<String> getSuffixes() {
         return suffixes;
