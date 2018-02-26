@@ -1,6 +1,5 @@
 package com.jfeat.am.module.NumberGenerator.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +14,7 @@ import java.util.List;
 public class PoolConfig {
     private String prefix;
     private String suffix;
-
-    private String length;
+    private String minlength;
 
     //存放所有前缀
     private List<String> prefixes = new ArrayList<>();
@@ -40,12 +38,12 @@ public class PoolConfig {
         this.prefixes = prefixes;
     }
 
-    public String getLength() {
-        return length;
+    public String getMinlength() {
+        return minlength;
     }
 
-    public void setLength(String length) {
-        this.length = length;
+    public void setMinlength(String minlength) {
+        this.minlength = minlength;
     }
 
     public PoolConfig() {

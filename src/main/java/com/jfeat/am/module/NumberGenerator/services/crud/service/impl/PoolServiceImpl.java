@@ -111,7 +111,7 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
         Integer integer = poolMapper.selectCount(new EntityWrapper<Pool>());
 
         List<Pool> pools = new CopyOnWriteArrayList<Pool>();
-        String l = poolConfig.getLength() == null ? 4 + "" : poolConfig.getLength();
+        String l = poolConfig.getMinlength() == null ? 4 + "" : poolConfig.getMinlength();
         Integer length = Integer.parseInt(l);
         String number = "";
         for (int i = 0; i < length; i++) {

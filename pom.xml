@@ -21,7 +21,7 @@
 	<properties>
 		<sb-base.version>1.0.0</sb-base.version>
 		<sb-crud.version>1.0.4-SNAPSHOT</sb-crud.version>
-		<skipStandalone>false</skipStandalone>
+		<skipStandalone>true</skipStandalone>
 	</properties>
 
 	<dependencies>
@@ -30,21 +30,12 @@
 			<artifactId>sb-base</artifactId>
 			<version>${sb-base.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.jfeat</groupId>
-			<artifactId>power-base</artifactId>
-			<version>1.0.0</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>com.jfeat</groupId>
 			<artifactId>sb-crud</artifactId>
 			<version>${sb-crud.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.jfeat</groupId>
-			<artifactId>sb-account</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 
 
