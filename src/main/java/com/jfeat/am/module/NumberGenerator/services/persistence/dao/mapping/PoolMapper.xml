@@ -60,7 +60,12 @@
 	</select>
 
 	<select id="showField" resultType="string">
-		select COLUMN_NAME from information_schema.COLUMNS where table_name = 'orderPool'
+		SELECT COLUMN_NAME 
+			FROM information_schema.COLUMNS
+			WHERE
+					table_name = 'orderPool'
+					  	AND
+					TABLE_SCHEMA IN (SELECT database())
 	</select>
 
 	<insert id="addConfig" parameterType="string">
