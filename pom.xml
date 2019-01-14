@@ -21,7 +21,7 @@
 	<properties>
 		<sb-base.version>1.0.0</sb-base.version>
 		<sb-crud.version>1.0.4-SNAPSHOT</sb-crud.version>
-		<skipStandalone>true</skipStandalone>
+		<skipStandalone>false</skipStandalone>
 	</properties>
 
 	<dependencies>

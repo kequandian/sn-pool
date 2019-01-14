@@ -6,6 +6,3 @@ CREATE TABLE `orderPool` (
   `isUsed` SMALLINT(5) NOT NULL DEFAULT '0' COMMENT '是否已经使用',
   UNIQUE KEY `uni_num` (`number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
