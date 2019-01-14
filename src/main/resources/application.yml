@@ -41,7 +41,7 @@ jwt:
 
 ###################  项目启动端口  ###################
 server:
-  port: 8080
+  port: 8088
 
 ###################  beetl配置  ###################
 beetl:
@@ -106,7 +106,7 @@ spring:
 
 logging:
   level: debug
-  file: logs/sbseed.log
+  file: logs/snpool.log
 
 am:
   shiro-cache-redis: false
@@ -118,22 +118,17 @@ am:
 spring:
   profiles: dev
   datasource:
-      url: jdbc:mysql://localhost:3306/power?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://127.0.0.1:3306/snpool?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
       username: root
-      password:
+      password: root
       filters: log4j,wall,mergeStat
       initialize: false
       schema: classpath*:sql/*-schema.sql
       data: classpath*:sql/*-data.sql
-  rabbitmq:
-      host: 127.0.0.1
-      port: 5672
-      username: jfeat
-      password: jfeat
 
 logging:
   level: debug
-  file: logs/sbseed.log
+  file: logs/snpool.log
 
 am:
   shiro-cache-redis: false
@@ -145,19 +140,14 @@ am:
 spring:
   profiles: produce
   datasource:
-      url: jdbc:mysql://112.74.26.228:3306/power?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
-      username: jfeat
-      password: jfeat
+      url: jdbc:mysql://127.0.0.1:3306/snpool?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: root
       filters: log4j,wall,mergeStat
-  rabbitmq:
-      host: 112.74.26.228
-      port: 5672
-      username: jfeat
-      password: jfeat
 
 logging:
   level: warn
-  file: logs/sbseed.log
+  file: logs/snpool.log
 
 am:
-  shiro-cache-redis: true
+  shiro-cache-redis: false
