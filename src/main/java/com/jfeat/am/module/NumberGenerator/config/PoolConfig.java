@@ -15,12 +15,21 @@ public class PoolConfig {
     private String prefix;
     private String suffix;
     private String minlength;
+    private boolean hasKey;
 
     //存放所有前缀
     private List<String> prefixes = new ArrayList<>();
 
     //存放所有的后缀
     private List<String> suffixes = new ArrayList<>();
+
+    public boolean getHasKey() {
+        return hasKey;
+    }
+
+    public void setHasKey(boolean hasKey) {
+        this.hasKey = hasKey;
+    }
 
     public List<String> getSuffixes() {
         return suffixes;

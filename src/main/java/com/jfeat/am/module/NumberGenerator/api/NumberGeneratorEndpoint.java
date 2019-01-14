@@ -29,6 +29,8 @@ public class NumberGeneratorEndpoint extends BaseController {
 
     @Autowired
     private Identify identify;
+    @Autowired
+    private PoolConfig poolConfig;
 
     @GetMapping("/random")
     public Tip getRandom(@RequestParam(name ="prefix",required = false)String prefix,@RequestParam(name = "suffix",required = false)String suffix) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
@@ -43,7 +45,9 @@ public class NumberGeneratorEndpoint extends BaseController {
     @GetMapping("/rollback")
     public Tip rollbackNumber(@RequestParam(name ="number",required = true)String number) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
         String num = number.substring(0,number.length()-3);
-        if(identify.checkIdentify(number)){
+        if(poolConfig != null && !poolConfig.getHasKey()) {
+            poolService.rollback(number);
+        } else if(identify.checkIdentify(number)){
             poolService.rollback(num);
         }else{
             throw new IllegalArgumentException("rollback number is illegal");
@@ -55,6 +59,5 @@ public class NumberGeneratorEndpoint extends BaseController {
     public Tip test(@RequestParam(name="number",required = true) String number) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeyException {
         return SuccessTip.create(AESEncoder.AESEncoder(number));
     }
-
 
 }

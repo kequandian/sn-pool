@@ -1,6 +1,8 @@
 package com.jfeat.am.module.NumberGenerator.services.crud.service.impl;
 
+import com.jfeat.am.module.NumberGenerator.config.PoolConfig;
 import com.jfeat.am.module.NumberGenerator.services.crud.service.Identify;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;
@@ -16,9 +18,14 @@ import java.security.NoSuchAlgorithmException;
  */
 @Service
 public class IdentifyImpl implements Identify {
+    @Autowired
+    private PoolConfig poolConfig;
     @Override
     public String addIdentify(String num) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeyException {
-        return num+getThreeAp(AESEncoder.AESEncoder(num));
+        if(poolConfig != null && poolConfig.getHasKey()) {
+            return num+getThreeAp(AESEncoder.AESEncoder(num));
+        }
+        return num;
     }
 
     @Override
@@ -26,6 +33,7 @@ public class IdentifyImpl implements Identify {
         int length = source.length();
         String num = source.substring(0,length-3);
         String en = source.substring(length-3);
+
         if(getThreeAp(AESEncoder.AESEncoder(num)).equals(en)){
             return true;
         }else {
