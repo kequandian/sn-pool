@@ -9,7 +9,7 @@ PoolConfig:
             - OA
             - TD
     # 返回是否带上密钥
-    hasKey: false
+    hasKey: true
 
 ##  TD  - 任务
 ##  ACT - 活动
@@ -41,7 +41,7 @@ jwt:
 
 ###################  项目启动端口  ###################
 server:
-  port: 8088
+  port: 8801
 
 ###################  beetl配置  ###################
 beetl:
@@ -49,7 +49,6 @@ beetl:
   delimiter-statement-end: null
   resource-tagroot: common/tags   #自定义标签文件Root目录和后缀
   resource-tagsuffix: tag
-
 
 ###################  spring配置  ###################
 spring:
