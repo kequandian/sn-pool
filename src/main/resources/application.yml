@@ -10,6 +10,8 @@ PoolConfig:
             - TD
     # 返回是否带上密钥
     hasKey: true
+    # 返回中文日期格式，默认为西方日期格式 en
+    dateFormat: zh
 
 ##  TD  - 任务
 ##  ACT - 活动

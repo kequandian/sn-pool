@@ -16,6 +16,7 @@ public class PoolConfig {
     private String suffix;
     private String minlength;
     private boolean hasKey;
+    private String dateFormat;
 
     //存放所有前缀
     private List<String> prefixes = new ArrayList<>();
@@ -82,4 +83,11 @@ public class PoolConfig {
         this.suffix = suffix;
     }
 
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
 }

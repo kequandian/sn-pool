@@ -1,8 +1,5 @@
 package com.jfeat.am.module.NumberGenerator.services.crud.service.impl;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
@@ -11,6 +8,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * Created by craftperson on 2018/1/19.
@@ -31,13 +29,13 @@ public class AESEncoder {
         Cipher cipher = initCipher(Cipher.ENCRYPT_MODE);
         byte[] byte_content = content.getBytes(CHARSET);//为了避免乱码，设置成utf-8，当然其他格式也行
         byte[] byte_AES = cipher.doFinal(byte_content);//对内容进行加密
-        String AES_encode = new String(new BASE64Encoder().encode(byte_AES));//把获取的加密字节重新封装为字符串输出
+        String AES_encode = new String(Base64.getMimeEncoder().encodeToString(byte_AES));//把获取的加密字节重新封装为字符串输出
         return  AES_encode;
     }
 
     public static String AESDecode(String encodeContent) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IOException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = initCipher(Cipher.DECRYPT_MODE);
-        byte [] byte_content= new BASE64Decoder().decodeBuffer(encodeContent);
+        byte [] byte_content= Base64.getMimeDecoder().decode(encodeContent);
         byte[] content = cipher.doFinal(byte_content);
         return new String(content,CHARSET);
     }

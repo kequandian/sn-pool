@@ -403,13 +403,18 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
 
     @Override
     public String formatDateSpecial(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+
+        boolean isZhDateFormat = "zh".equals(poolConfig.getDateFormat());
+
+        SimpleDateFormat simpleDateFormat = isZhDateFormat ? new SimpleDateFormat("yyyyMMdd") : new SimpleDateFormat("yyyyddMM");
         String format = simpleDateFormat.format(date);
-        String left = format.substring(0, 2);
-        String left2 = format.substring(2, 4);
-        String right = format.substring(4, 6);
-        String right2 = format.substring(6, 8);
-        return left + left2 + right2 + right;
+        return format;
+
+        //String left = format.substring(0, 2);
+        //String left2 = format.substring(2, 4);
+        //String right = format.substring(4, 6);
+        //String right2 = format.substring(6, 8);
+        //return left + left2 + right2 + right;
     }
 
     private void setTheKeySetList() {

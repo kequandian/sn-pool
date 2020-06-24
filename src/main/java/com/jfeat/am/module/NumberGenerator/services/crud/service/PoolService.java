@@ -20,7 +20,7 @@ import java.util.Date;
 public interface PoolService  extends CRUDServiceOnly<Pool> {
         public void initPool();
 
-        public String getSerialNumber(boolean isRandom,PoolConfig poolConfig);
+        public String getSerialNumber(boolean isRandom, PoolConfig poolConfig);
 
         public String getSerialNumber();
         public String getSerialNumber(String prefix);
