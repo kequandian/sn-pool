@@ -1,17 +1,16 @@
 package com.jfeat.am.module.NumberGenerator.services.crud.service.impl;
 
+import com.jfeat.crud.base.exception.BusinessCode;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.jfeat.am.common.crud.impl.CRUDServiceOnlyImpl;
-import com.jfeat.am.common.exception.BizExceptionEnum;
-import com.jfeat.am.common.exception.BusinessException;
 import com.jfeat.am.module.NumberGenerator.config.PageForPool;
 import com.jfeat.am.module.NumberGenerator.config.PoolConfig;
 import com.jfeat.am.module.NumberGenerator.services.crud.service.PoolService;
 import com.jfeat.am.module.NumberGenerator.services.persistence.dao.PoolMapper;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.Pool;
 import com.jfeat.am.module.NumberGenerator.services.persistence.model.PoolModel;
+import com.jfeat.crud.base.exception.BusinessException;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @since 2017-12-05
  */
 @Service
-public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolService {
+public class PoolServiceImpl  implements PoolService {
 
     @Resource
     private SqlSessionFactory sqlSessionFactory;
@@ -42,7 +41,6 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
     @Resource
     private PoolMapper poolMapper;
 
-    @Override
     protected BaseMapper<Pool> getMasterMapper() {
         return poolMapper;
     }
@@ -213,7 +211,7 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
             initData();
         }
         catch (SQLException ex) {
-            throw new BusinessException(BizExceptionEnum.DATABASE_CONNECT_ERROR);
+            throw new BusinessException(BusinessCode.DatabaseConnectFailure);
         }
     }
 
@@ -393,7 +391,7 @@ public class PoolServiceImpl extends CRUDServiceOnlyImpl<Pool> implements PoolSe
             return returningNum;
         }
 
-        throw new BusinessException(BizExceptionEnum.SERVER_ERROR);
+        throw new BusinessException(BusinessCode.NotSupport);
     }
 
     @Override

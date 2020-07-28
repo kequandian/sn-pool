@@ -19,24 +19,46 @@
 	</parent>
 
 	<properties>
-		<sb-base.version>1.0.0</sb-base.version>
-		<sb-crud.version>1.0.4-SNAPSHOT</sb-crud.version>
+		<crud-base.version>0.0.1</crud-base.version>
+		<skipStandalone>false</skipStandalone>
+		<commons-lang3.version>3.9</commons-lang3.version>
+		<!---CRUD, scope provided-->
+		<crud-plus.version>0.0.6</crud-plus.version>
+		<crud-core.version>0.0.2</crud-core.version>
+		<!---only dev, scope provided-->
+		<crud-dev.version>0.0.1</crud-dev.version>
+		<!---only produce, scope provided-->
 		<skipStandalone>true</skipStandalone>
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.jfeat</groupId>
-			<artifactId>sb-base</artifactId>
-			<version>${sb-base.version}</version>
-		</dependency>
+  <dependencies>
+	<dependency>
+		<groupId>com.jfeat</groupId>
+		<artifactId>crud-base</artifactId>
+		<version>${crud-base.version}</version>
+	</dependency>
 
-
-		<dependency>
-			<groupId>com.jfeat</groupId>
-			<artifactId>sb-crud</artifactId>
-			<version>${sb-crud.version}</version>
-		</dependency>
+	  <dependency>
+		  <groupId>com.jfeat</groupId>
+		  <artifactId>crud-dev</artifactId>
+		  <version>${crud-dev.version}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>com.jfeat</groupId>
+		  <artifactId>crud-plus</artifactId>
+		  <version>${crud-plus.version}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>com.jfeat</groupId>
+		  <artifactId>crud-core</artifactId>
+		  <version>${crud-core.version}</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+	  <dependency>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-lang3</artifactId>
+		  <version>${commons-lang3.version}</version>
+	  </dependency>
 
 
 		<!--spring boot依赖-->
@@ -100,55 +122,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!--shiro依赖-->
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-core</artifactId>
-			<version>${shiro.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-spring</artifactId>
-			<version>${shiro.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-ehcache</artifactId>
-			<version>${shiro.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- jwt -->
-		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>${jjwt.version}</version>
-		</dependency>
-
-		<!-- redis -->
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>${jedis.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.ruedigermoeller</groupId>
-			<artifactId>fst</artifactId>
-			<version>${fst.version}</version>
-		</dependency>
-
 		<!--其他依赖-->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -166,31 +139,6 @@
 			<version>${commons.io.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.penggle</groupId>
-			<artifactId>kaptcha</artifactId>
-			<version>${kaptcha.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>${ehcache.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.zxing</groupId>
-			<artifactId>core</artifactId>
-			<version>${zxing.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>${velocity.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.ibeetl</groupId>
-			<artifactId>beetl</artifactId>
-			<version>${beetl.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 			<version>${swagger.version}</version>
@@ -200,24 +148,37 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>${swagger.version}</version>
 		</dependency>
-	</dependencies>
+  </dependencies>
+
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>com.github.kongchen</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<version>3.1.5</version>
 				<configuration>
-					<skip>${skipStandalone}</skip>
+					<apiSources>
+						<apiSource>
+							<springmvc>true</springmvc>
+							<locations>
+								<location>com.jfeat</location>
+							</locations>
+							<info>
+								<title>${project.name}</title>
+								<version>${project.version}</version>
+								<description>${project.description}</description>
+							</info>
+							<swaggerDirectory>${project.build.directory}/swagger/</swaggerDirectory>
+						</apiSource>
+					</apiSources>
 				</configuration>
 				<executions>
 					<execution>
+						<phase>compile</phase>
 						<goals>
-							<goal>repackage</goal>
+							<goal>generate</goal>
 						</goals>
-						<configuration>
-							<classifier>standalone</classifier>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -225,9 +186,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -250,13 +212,34 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.2</version>
 			</plugin>
+
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<imageName>${project.artifactId}</imageName>
+					<imageTags>
+						<imageTag>${project.version}</imageTag>
+						<imageTag>latest</imageTag>
+					</imageTags>
+					<dockerDirectory>src/main/docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}-standalone.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
+			<!--app project do not need deploy-->
 		</plugins>
+
 		<resources>
-			<resource>
-				<directory>src/main/webapp</directory>
-			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
 			</resource>
